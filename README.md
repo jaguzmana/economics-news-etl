@@ -12,6 +12,9 @@ The Economics News ETL project is designed to extract, transform, and load (ETL)
 - [License](#license)
 - [Contact Information](#contact-information)
 
+## Project Architecture
+<img src="assets/images/data_architecture.png" height="500px">
+
 ## How to run the project?
 
 ### Prerequisites
@@ -23,7 +26,7 @@ The Economics News ETL project is designed to extract, transform, and load (ETL)
    ```bash
    git clone https://github.com/jaguzmana/economics-news-etl.git
    ```
-  
+
 2. Create a virtual environment:
    ```bash
    python3 -m venv venv
@@ -31,12 +34,12 @@ The Economics News ETL project is designed to extract, transform, and load (ETL)
 
 3. Activate the virtual environment:
    ```bash
-   source venv/bin/activate  # On Windows use `venv\Scriptsctivate`
+   source venv/bin/activate
    ```
 
 4. Install the necessary modules using the `requirements.txt` file:
    ```bash
-   pip install -r requirements.txt 
+   pip install -r requirements.txt
    ```
 
 5. Ensure you have a `.env` file in the root of your project directory with the following content:
