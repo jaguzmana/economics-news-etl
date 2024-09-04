@@ -1,0 +1,8 @@
+venv/
+.env
+pyrightconfig.json
+.ipynb_checkpoints
+/scr/*/__pycache__
+app.log
+scr/data/staging_extracted_data/*
+scr/data/staging_transformed_data/*
