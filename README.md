@@ -50,6 +50,9 @@ The Economics News ETL project is designed to extract, transform, and load (ETL)
    POSTGRES_DB_ETL_1=EconomicsNews
    PGADMIN_MAIL=admin@admin.com
    PGADMIN_PW=adminadmin
+   DATA_LOCATION=/home/jaguzmana/projects/economics-news-scraper/data
+   DATA_LOCATION_STG_EXTRACTED=/home/jaguzmana/projects/economics-news-etl/scr/data/staging_extracted_data/stg_extracted.csv
+   DATA_LOCATION_STG_TRANSFORMED=/home/jaguzmana/projects/economics-news-etl/scr/data/staging_transformed_data/stg_transformed.csv
    ```
 
 6. Run the ETL process:
