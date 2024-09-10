@@ -3,6 +3,7 @@ from scr.pipeline.transform import transform
 from scr.pipeline.load import load
 from scr.database.conection import get_connection
 from scr.utils.logger_config import logger
+from scr.utils.config_storage import config_storage
 from decouple import config
 
 def main() -> None:
@@ -31,4 +32,5 @@ def main() -> None:
         return
 
 if __name__ == '__main__':
+    config_storage()
     main()
