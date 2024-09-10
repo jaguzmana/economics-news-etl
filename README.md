@@ -111,4 +111,4 @@ To run the PostgreSQL database and pgAdmin using Docker, follow these steps:
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Contact Information
-For questions or support, please open an issue in the [GitHub repository](https://github.com/jaguzmana/economics-news-etl/issues) or reach out via [Twitter (now X)](https://x.com/jaguzmana_).
+For questions or support, please open an issue in the [GitHub repository](https://github.com/jaguzmana/economics-news-etl/issues).
