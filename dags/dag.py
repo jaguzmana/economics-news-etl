@@ -11,16 +11,16 @@ def economics_news_etl():
     @task
     def extract_past_week_data(**context):
         from airflow.providers.mongo.hooks.mongo import MongoHook
-        
+
         mongodb_conn = MongoHook(
             mongo_conn_id="mongo_id"
         )
-    
+
         cursor = mongodb_conn.get_collection("articles", mongo_db="newsdb")
         # Excluir _id de la proyección para evitar problemas de serialización
         cursor = cursor.find({}, {"_id": 0}, limit=5)
         articulos = list(cursor)
-    
+
         task_logger.info(f"Extracted {len(articulos)} articles")
         return articulos
 
