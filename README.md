@@ -94,7 +94,7 @@ To run the PostgreSQL database and pgAdmin, follow these steps:
 
 The ETL pipeline is orchestrated using Airflow DAGs defined in the `dags/` directory:
 
-- **economics_news_etl**: Main ETL pipeline that:
+**economics_news_etl**: Main ETL pipeline that:
 
 <img src="assets/images/dag.png" height="500px">
 
