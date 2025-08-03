@@ -1,45 +1,97 @@
-Overview
-========
+# Economics News ETL
 
-Welcome to Astronomer! This project was generated after you ran 'astro dev init' using the Astronomer CLI. This readme describes the contents of the project, as well as how to run Apache Airflow on your local machine.
+## Description
 
-Project Contents
-================
+The Economics News ETL project is designed to extract, transform, and load (ETL) news data from various economic news sources into a PostgreSQL database. The source data is stored in a MongoDB database and is extracted from my previous project, [Economics News Scraper](https://github.com/jaguzmana/economics-news-scraper). This project automates the collection, cleaning, and storage of news data, which can then be used for analysis and reporting. The pipeline is orchestrated using Astro (Astronomer), an Airflow-based platform, with DAGs defined in the `dags/` directory. The project utilizes Python and Docker for containerized deployment.
 
-Your Astro project contains the following files and folders:
+## Table of Contents
 
-- dags: This folder contains the Python files for your Airflow DAGs. By default, this directory includes one example DAG:
-    - `example_astronauts`: This DAG shows a simple ETL pipeline example that queries the list of astronauts currently in space from the Open Notify API and prints a statement for each astronaut. The DAG uses the TaskFlow API to define tasks in Python, and dynamic task mapping to dynamically print a statement for each astronaut. For more on how this DAG works, see our [Getting started tutorial](https://www.astronomer.io/docs/learn/get-started-with-airflow).
-- Dockerfile: This file contains a versioned Astro Runtime Docker image that provides a differentiated Airflow experience. If you want to execute other commands or overrides at runtime, specify them here.
-- include: This folder contains any additional files that you want to include as part of your project. It is empty by default.
-- packages.txt: Install OS-level packages needed for your project by adding them to this file. It is empty by default.
-- requirements.txt: Install Python packages needed for your project by adding them to this file. It is empty by default.
-- plugins: Add custom or community plugins for your project to this file. It is empty by default.
-- airflow_settings.yaml: Use this local-only file to specify Airflow Connections, Variables, and Pools instead of entering them in the Airflow UI as you develop DAGs in this project.
+- [Description](#description)
+- [How to run the project?](#how-to-run-the-project)
+  - [Prerequisites](#prerequisites)
+  - [Steps](#steps)
+- [Astro & Docker Setup](#astro--docker-setup)
+- [Airflow DAG](#airflow-dag)
+- [License](#license)
+- [Contact Information](#contact-information)
 
-Deploy Your Project Locally
-===========================
+## Project Architecture
 
-Start Airflow on your local machine by running 'astro dev start'.
+<img src="assets/images/data_architecture.png" height="500px">
 
-This command will spin up five Docker containers on your machine, each for a different Airflow component:
+## How to run the project?
 
-- Postgres: Airflow's Metadata Database
-- Scheduler: The Airflow component responsible for monitoring and triggering tasks
-- DAG Processor: The Airflow component responsible for parsing DAGs
-- API Server: The Airflow component responsible for serving the Airflow UI and API
-- Triggerer: The Airflow component responsible for triggering deferred tasks
+### Prerequisites
 
-When all five containers are ready the command will open the browser to the Airflow UI at http://localhost:8080/. You should also be able to access your Postgres Database at 'localhost:5432/postgres' with username 'postgres' and password 'postgres'.
+- **Python:** Ensure Python is installed on your machine.
+- **Docker:** Make sure Docker and Docker Compose are installed on your machine.
+- **Astro CLI:** Install the Astro CLI (see [Astro CLI documentation](https://docs.astronomer.io/astro/cli-install)).
 
-Note: If you already have either of the above ports allocated, you can either [stop your existing Docker containers or change the port](https://www.astronomer.io/docs/astro/cli/troubleshoot-locally#ports-are-not-available-for-my-local-airflow-webserver).
+### Steps
 
-Deploy Your Project to Astronomer
-=================================
+1. Clone the repository:
 
-If you have an Astronomer account, pushing code to a Deployment on Astronomer is simple. For deploying instructions, refer to Astronomer documentation: https://www.astronomer.io/docs/astro/deploy-code/
+   ```bash
+   git clone https://github.com/jaguzmana/economics-news-etl.git
+   ```
 
-Contact
-=======
+2. Ensure you have a `.env` file in the `etl_docker_db/` folder with the following content:
 
-The Astronomer CLI is maintained with love by the Astronomer team. To report a bug or suggest a change, reach out to our support.
+   ```env
+   POSTGRES_USER=postgres
+   POSTGRES_PW=adminadmin
+   POSTGRES_DB=postgres
+   POSTGRES_DB_ETL=EconomicsNews
+   PGADMIN_MAIL=admin@admin.com
+   PGADMIN_PW=adminadmin
+   ```
+
+3. Start the database and pgAdmin using Docker Compose (see next section). The pgAdmin instance is independent from Astro and is used to manage your PostgreSQL database.
+
+4. Start Astro locally (Astro will automatically create and manage the Python environment for you):
+
+   ```bash
+   astro dev start
+   ```
+
+5. Trigger the DAG `economics_news_etl` from the Astro UI or CLI.
+
+6. Monitor the ETL process in the Astro UI and check logs for details.
+
+7. After testing the pipeline, stop the Astro environment:
+
+   ```bash
+   astro dev stop
+   ```
+
+## Astro & Docker Setup
+
+To run the PostgreSQL database and pgAdmin, follow these steps:
+
+1. Ensure Docker and Docker Compose are installed on your machine.
+
+2. Use the provided Docker Compose file located at `etl_docker_db/docker-compose.yml`:
+
+   ```bash
+   docker-compose -f etl_docker_db/docker-compose.yml up
+   ```
+
+3. Access pgAdmin by navigating to `http://localhost:5051` in your browser. Log in with the email and password provided in the `.env` file in `etl_docker_db/`.
+
+4. Use the pgAdmin interface to manage your PostgreSQL database. This pgAdmin instance is separate from Astro and is only for database management.
+
+5. Start Astro locally and trigger the ETL DAG as described above.
+
+## Airflow DAG
+
+The ETL pipeline is orchestrated using an Airflow DAG defined in the `dags/dag.py` file. The DAG automates the following steps:
+
+1. **Extract**: Connects to the MongoDB database and extracts articles from the past week using a custom aggregation pipeline.
+2. **Transform**: Cleans the extracted articles, removes duplicates, standardizes fields, and parses dates and newspaper names.
+3. **Load**: Prepares the transformed articles for loading into the target system (e.g., PostgreSQL).
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contact Information
+For questions or support, please open an issue in the [GitHub repository](https://github.com/jaguzmana/economics-news-etl/issues).
