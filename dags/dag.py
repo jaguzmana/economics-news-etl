@@ -17,14 +17,13 @@ task_logger = logging.getLogger("airflow.task")
 def economics_news_etl():
 
     @task
-    def extract_past_week_data(**context):
+    def extract_week_data(**context):
         from airflow.providers.mongo.hooks.mongo import MongoHook
         from include.pipeline.extract import get_current_week_start
 
         # Get current week start date
         today = context["ts"]
         current_week_start = get_current_week_start(today)
-        current_week_start = "27-07-2025"
         task_logger.info(f"Filtering articles from week starting: {current_week_start}")
 
         # MongoDB aggregation query with week filter
@@ -70,9 +69,6 @@ def economics_news_etl():
                         }
                     }
                 }
-            },
-            {
-                "$limit": 2
             }
         ]
 
@@ -92,7 +88,7 @@ def economics_news_etl():
     @task_group
     def transform(articles):
         @task
-        def remove_duplicates(articles):
+        def remove_duplicates_na(articles):
             import pandas as pd
 
             df_articles = pd.DataFrame(articles)
@@ -101,8 +97,8 @@ def economics_news_etl():
 
             return df_deduplicated_data.to_dict(orient="records")
 
-        @task
-        def clean_each_article(article):
+        @task(max_active_tis_per_dag=1)
+        def clean_format_each_article(article):
             from include.pipeline.transform import transform
             import pandas as pd
 
@@ -111,17 +107,42 @@ def economics_news_etl():
             task_logger.info(df_transformed_article)
             return df_transformed_article.to_dict(orient="records")
 
-        _removed_duplicates = remove_duplicates(articles)
-        _clean_each_article = clean_each_article.expand(article=_removed_duplicates)
+        _removed_duplicates_na = remove_duplicates_na(articles)
+        _clean_format_each_article = clean_format_each_article.expand(article=_removed_duplicates_na)
 
-        return _clean_each_article
+        return _clean_format_each_article
 
-    @task
+    @task(max_active_tis_per_dag=1)
     def load(article):
-        task_logger.info("article")
+        from airflow.providers.postgres.hooks.postgres import PostgresHook
 
-    _extracted_past_week_data = extract_past_week_data()
-    _transformed_data = transform(_extracted_past_week_data)
+        task_logger.info(f"Loading article: {article[0]['title']}")
+
+        # Use PostgresHook to get connection
+        postgres_hook = PostgresHook(postgres_conn_id='postgres_id')
+
+        insert_sql = """
+            INSERT INTO public."Articles"
+                (title, published_at, lead, author, url, source)
+            VALUES
+                (%(title)s, %(published_at)s, %(lead)s, %(author)s, %(url)s, %(source)s)
+        """
+
+        params = {
+            'title': article[0]['title'],
+            'published_at': article[0]["date"],
+            'lead': article[0]['lead'],
+            'author': article[0]['author'],
+            'url': article[0]['url'],
+            'source': article[0]['newspaper']
+        }
+
+        # Execute the insert
+        postgres_hook.run(insert_sql, parameters=params)
+        task_logger.info(f"Successfully loaded article: {article[0]['title']}")
+
+    _extracted_week_data = extract_week_data()
+    _transformed_data = transform(_extracted_week_data)
     load.expand(article=_transformed_data)
 
 economics_news_etl()
