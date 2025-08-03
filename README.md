@@ -41,24 +41,32 @@ The Economics News ETL project is designed to extract, transform, and load (ETL)
    POSTGRES_USER=postgres
    POSTGRES_PW=adminadmin
    POSTGRES_DB=postgres
-   POSTGRES_DB_ETL=EconomicsNews
    PGADMIN_MAIL=admin@admin.com
    PGADMIN_PW=adminadmin
    ```
 
 3. Start the database and pgAdmin using Docker Compose (see next section). The pgAdmin instance is independent from Astro and is used to manage your PostgreSQL database.
 
-4. Start Astro locally (Astro will automatically create and manage the Python environment for you):
+4. Configure Airflow Connections:
+   - **MongoHook**: Create a connection in Airflow named `mongo_id` with type `MongoDB` and set the host, port, username, and password as needed for your MongoDB instance.
+   - **PostgresHook**: Create a connection in Airflow named `postgres_id` with type `Postgres` and set the host, port, username, and password as needed for your PostgreSQL instance.
+   You can do this via the Astro/Airflow UI under Admin > Connections.
+
+5. Start Astro locally (Astro will automatically create and manage the Python environment for you):
 
    ```bash
    astro dev start
    ```
 
-5. Trigger the DAG `economics_news_etl` from the Astro UI or CLI.
+6. **Run the `execute_create_db` DAG once to create the `Articles` table in your PostgreSQL database.**
+   - This DAG uses the SQL file at `include/sql/create_db.sql` to create the table structure.
+   - Trigger the DAG named `execute_create_db` from the Astro/Airflow UI or CLI before running the main ETL DAG.
 
-6. Monitor the ETL process in the Astro UI and check logs for details.
+7. Trigger the DAG `economics_news_etl` from the Astro UI or CLI to run the ETL pipeline.
 
-7. After testing the pipeline, stop the Astro environment:
+8. Monitor the ETL process in the Astro UI and check logs for details.
+
+9. After testing the pipeline, stop the Astro environment:
 
    ```bash
    astro dev stop
@@ -84,14 +92,20 @@ To run the PostgreSQL database and pgAdmin, follow these steps:
 
 ## Airflow DAG
 
-The ETL pipeline is orchestrated using an Airflow DAG defined in the `dags/dag.py` file. The DAG automates the following steps:
+The ETL pipeline is orchestrated using Airflow DAGs defined in the `dags/` directory:
 
-1. **Extract**: Connects to the MongoDB database and extracts articles from the past week using a custom aggregation pipeline.
-2. **Transform**: Cleans the extracted articles, removes duplicates, standardizes fields, and parses dates and newspaper names.
-3. **Load**: Prepares the transformed articles for loading into the target system (e.g., PostgreSQL).
+- **economics_news_etl**: Main ETL pipeline that:
+
+<img src="assets/images/dag.png" height="500px">
+
+  1. **Extracts** articles from MongoDB for the past week using a custom aggregation pipeline.
+  2. **Transforms** the extracted articles by cleaning, removing duplicates, standardizing fields, and parsing dates and newspaper names.
+  3. **Loads** the transformed articles into the PostgreSQL `Articles` table.
 
 ## License
+
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Contact Information
+
 For questions or support, please open an issue in the [GitHub repository](https://github.com/jaguzmana/economics-news-etl/issues).
