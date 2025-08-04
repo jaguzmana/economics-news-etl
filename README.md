@@ -98,7 +98,7 @@ The ETL pipeline is orchestrated using Airflow DAGs defined in the `dags/` direc
 
 <img src="assets/images/dag.png" height="500px">
 
-  1. **Extracts** articles from MongoDB for the past week using a custom aggregation pipeline.
+  1. **Extracts** articles from MongoDB for the past week using a custom aggregation query.
   2. **Transforms** the extracted articles by cleaning, removing duplicates, standardizing fields, and parsing dates and newspaper names.
   3. **Loads** the transformed articles into the PostgreSQL `Articles` table.
 
