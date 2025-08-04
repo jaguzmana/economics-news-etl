@@ -25,7 +25,7 @@ The Economics News ETL project is designed to extract, transform, and load (ETL)
 
 - **Python:** Ensure Python is installed on your machine.
 - **Docker:** Make sure Docker and Docker Compose are installed on your machine.
-- **Astro CLI:** Install the Astro CLI (see [Astro CLI documentation](https://docs.astronomer.io/astro/cli-install)).
+- **Astro CLI:** Install the Astro CLI (see [Astro CLI documentation](https://www.astronomer.io/docs/astro/cli/install-cli/)).
 
 ### Steps
 
