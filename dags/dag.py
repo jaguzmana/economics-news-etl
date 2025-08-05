@@ -14,7 +14,7 @@ task_logger = logging.getLogger("airflow.task")
         "retry_delay": duration(minutes=3)
     }
 )
-def economics_news_etl():
+def economic_news_etl():
 
     @task
     def extract_week_data(**context):
@@ -145,4 +145,4 @@ def economics_news_etl():
     _transformed_data = transform(_extracted_week_data)
     load.expand(article=_transformed_data)
 
-economics_news_etl()
+economic_news_etl()
