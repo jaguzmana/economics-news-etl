@@ -1,8 +1,8 @@
-# Economics News ETL
+# Economic News ETL
 
 ## Description
 
-The Economics News ETL project is designed to extract, transform, and load (ETL) news data from various economic news sources into a PostgreSQL database. The source data is stored in a MongoDB database and is extracted from my previous project, [Economics News Scraper](https://github.com/jaguzmana/economics-news-scraper). This project automates the collection, cleaning, and storage of news data, which can then be used for analysis and reporting. The pipeline is orchestrated using Astro (Astronomer), an Airflow-based platform, with DAGs defined in the `dags/` directory. The project utilizes Python and Docker for containerized deployment.
+The Economic News ETL project is designed to extract, transform, and load (ETL) news data from various economic news sources into a PostgreSQL database. The source data is stored in a MongoDB database and is extracted from my previous project, [Economic News Scraper](https://github.com/jaguzmana/economics-news-scraper). This project automates the collection, cleaning, and storage of news data, which can then be used for analysis and reporting. The pipeline is orchestrated using Astro (Astronomer), an Airflow-based platform, with DAGs defined in the `dags/` directory. The project utilizes Python and Docker for containerized deployment.
 
 ## Table of Contents
 
@@ -62,7 +62,7 @@ The Economics News ETL project is designed to extract, transform, and load (ETL)
    - This DAG uses the SQL file at `include/sql/create_db.sql` to create the table structure.
    - Trigger the DAG named `execute_create_db` from the Astro/Airflow UI or CLI before running the main ETL DAG.
 
-7. Trigger the DAG `economics_news_etl` from the Astro UI or CLI to run the ETL pipeline.
+7. Trigger the DAG `economic_news_etl` from the Astro UI or CLI to run the ETL pipeline.
 
 8. Monitor the ETL process in the Astro UI and check logs for details.
 
@@ -94,7 +94,7 @@ To run the PostgreSQL database and pgAdmin, follow these steps:
 
 The ETL pipeline is orchestrated using Airflow DAGs defined in the `dags/` directory:
 
-**economics_news_etl**: Main ETL pipeline that:
+**economic_news_etl**: Main ETL pipeline that:
 
 <img src="assets/images/dag.png" height="500px">
 
